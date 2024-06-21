@@ -3,12 +3,17 @@
 {% block title %}Registrazione{% endblock %}
 
 {% block content %}
-<div class="registration-form">
+<div class="login-container">
     <h2>Registrati</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
+    <div class="login-form">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div> 
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="register-button">Register</button>
+        </form>
+    </div>
 </div>
+
 {% endblock %}

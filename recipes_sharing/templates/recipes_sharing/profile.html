@@ -8,18 +8,21 @@
     <div class="profile-header">
         <h1>Informazioni profilo</h1>
         <h2>{{ profile_user.user.username }}</h2>
-
-        <!-- FIXME: email non viene scritta-->
-        <p><strong>Email:</strong> {{ profile_user.user.email }}</p>
+        
+        <div class="profile-image">
+            {% if not profile_user.profile_image %}
+                <img src="profile_images/default_profile_image.jpeg" alt="Immagine di profilo non presente">
+            {% else %}
+            <img src="{{ profile_user.profile_image.url }}" alt="Immagine profilo di {{ profile_user.user}}">
+            {% endif %}
+        </div>
        
         {% if profile_user.bio %}
             <p><strong>Bio:</strong> {{ profile_user.bio }}</p>
         {% endif %}
     </div>
     
-    <div class="profile-image">
-        <img src="{{ profile_user.profile_image.url }}" alt="Profile Image">
-    </div>
+    
 
     <!-- Bottone per modificare il profilo -->
     {% if user == profile_user.user %}

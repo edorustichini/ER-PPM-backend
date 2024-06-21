@@ -12,12 +12,10 @@ class Recipe(models.Model):
     servings = models.PositiveIntegerField(default=2)
 
     preparation_instructions = models.TextField()
-    cooking_instructions = models.TextField()
-
     cooking_time = models.PositiveIntegerField()  # tempo di preparazione in minuti
     
     creation_date = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='recipe_images', blank=True, null=True) #TODO: aggiungere un'immagine di default
+    image = models.ImageField(upload_to='recipe_images', blank=True, null=True) 
     
     DIFFICULTIES = [
         ('easy', 'Easy'),
@@ -46,7 +44,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField()
     bio = models.CharField(max_length=50,null=True, blank=True) 
-    profile_image = models.ImageField(upload_to='media/profile_images', default='media/profile_images/default_profile.png') #TODO: aggiungere un'immagine di default
+    profile_image = models.ImageField(upload_to='media/profile_images', blank=True, null=True)
 
     
     def __str__(self):
