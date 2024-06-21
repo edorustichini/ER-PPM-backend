@@ -14,13 +14,19 @@ header {
     color: #fff;
     padding: 20px;
     text-align: center;
-    div {
+    
+    .header-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
         a:hover {
             text-decoration: underline;
             color: #ffffff8b;
+        }
+        .header-links {
+            display: flex;
+            gap: 10px;
+            align-items: baseline;
         }
     }
 
@@ -74,7 +80,6 @@ main {
 
 .recent-recipes {
     width: 50%;
-    
     flex-wrap: wrap;
     gap: 20px;
     
@@ -139,12 +144,14 @@ footer {
 .recipe-header {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
    
     > img {
         max-width: 300px;
         height: auto;
         border-radius: 8px;
+        margin: auto 0; /* centra immagine */
         margin-left: 20px;
     }
 
@@ -168,13 +175,7 @@ footer {
     }
 }
 
-.recipe-image {
-    width: 100%; /* L'immagine occupa tutta la larghezza del suo contenitore */
-    height: auto; /* Mantiene le proporzioni dell'immagine */
-    max-width: 500px; /* Limita la larghezza massima dell'immagine */
-    display: block; /* Rende l'immagine un elemento a blocco */
-    margin: 0 auto; /* Centra l'immagine orizzontalmente */
-}
+
 
 
 .recipe-instructions {
@@ -205,33 +206,12 @@ footer {
 .favorite-section {
     margin: 20px 0;
     text-align: center;
+    /* TODO: sistema bottono favourite */
+    button {
+        display: inline-block;
+    }
 }
 
-.favorite-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px 0;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.favorite-btn.add {
-    background-color: #ff6347;
-}
-
-.favorite-btn.remove {
-    background-color: #e5533d;
-}
-
-.favorite-btn.add:hover {
-    background-color: #e5533d;
-}
-
-.favorite-btn.remove:hover {
-    background-color: #c44d31;
-}
 
 .comments-section {
     margin-top: 20px;
@@ -256,7 +236,8 @@ footer {
     margin: 5px 0;
 }
 
-form {
+.recipe-detail form {
+    
     margin-top: 20px;
 }
 
@@ -277,15 +258,15 @@ form {
 }
 
 
-/* EdIT E DELETE RECIPE */
-.author-controls {
+/* Bottoni EdIT E DELETE RECIPE */
+.author-buttons {
     margin-top: 20px;
     display: flex;
     gap: 10px;
 }
 
 .edit-button,
-.delete-button {
+.delete-button, .favorite-button {
     padding: 10px 20px;
     font-size: 16px;
     border: none;
@@ -438,11 +419,12 @@ form {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
     .profile-header {
-        text-align: center;
-        margin-bottom: 20px;
+
     }
 
     .profile-header {
+        text-align: center;
+        margin-bottom: 20px;
         h1 {
             margin-bottom: 10px;
         }

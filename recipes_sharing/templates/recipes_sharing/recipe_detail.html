@@ -2,6 +2,8 @@
 
 {% block title %}Dettaglio Ricetta{% endblock %}
 
+
+
 {% block content %}
 <div class="recipe-detail">
 
@@ -13,34 +15,26 @@
         {% endif %}
         <h1>{{ recipe.recipe_name }}</h1>
     </div>
-<!-- FIXME: aggiunti image source-->
-
-
 
     <div class="recipe-info">
 
         <p class="author"><strong>Autore:</strong> <a href="{% url 'view_profile' recipe.author.username %}">{{ recipe.author.username }}</a></p>
         <p><strong>Descrizione:</strong> {{ recipe.description }}</p>
         <p><strong>Ingredienti:</strong> {{ recipe.ingredients }}</p>
-        
         <p><strong>Tempo di Cottura:</strong> {{ recipe.cooking_time }} minuti</p>
         <p><strong>Difficoltà:</strong> {{ recipe.get_difficulty_display }}</p>
         <p><strong>Categoria:</strong> {{ recipe.get_categories_display }}</p>
         <p><strong>Calorie:</strong> {{ recipe.calories }} kcal</p>
-        <p><strong>Likes: {{ recipe.likes }}</strong></p>
+        <p><strong>Likes: {{ recipe.likes }}</strong></p> <!-- FIXME: non si vede numero likes-->
     </div>
 
     <div class="recipe-instructions">
-        
         <p><strong>Istruzioni per la Preparazione</strong></p>
         <p> {{ recipe.preparation_instructions }}</p>
-
-        <p><strong>Istruzioni per la cottura:</strong></p>
-        <p>{{ recipe.cooking_instructions }}</p>    
     </div>
 
     {% if user == recipe.author %}
-        <div class="author-controls">
+        <div class="author-buttons">
             <form method="get" action="{% url 'edit_recipe' recipe.id %}">
                 <button type="submit" class="edit-button">Modifica</button>
             </form>
@@ -51,20 +45,22 @@
         </div>
     {% endif %}
     
-    
+    {% if user.is_authenticated %}
     <div class="favorite-section">
         {% if is_favorite %}
             <form method="post" action="{% url 'like_recipe' recipe.id %}">
                 {% csrf_token %}
-                <button type="submit">Rimuovi dai preferiti</button>
+                <button class="favorite-button"type="submit">Rimuovi dai preferiti</button>
             </form>
         {% else %}
             <form method="post" action="{% url 'like_recipe' recipe.id %}">
                 {% csrf_token %}
-                <button type="submit">Aggiungi ai preferiti</button>
+                <button class="favorite-button" type="submit">Aggiungi ai preferiti</button>
             </form>
         {% endif %}
     </div>
+    {% endif %}
+    
     
     
     <div class="comments-section">
@@ -89,9 +85,6 @@
         {% else %}
             <p>Effettua il <a href="{% url 'login' %}?next={{ request.path }}">login</a> per aggiungere un commento.</p>
         {% endif %}
-
-    
-
     </div>
 </div>
 {% endblock %}

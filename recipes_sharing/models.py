@@ -7,7 +7,7 @@ class Recipe(models.Model):
     recipe_name = models.CharField(max_length=70)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=300)
     ingredients = models.TextField()
 
     preparation_instructions = models.TextField()
