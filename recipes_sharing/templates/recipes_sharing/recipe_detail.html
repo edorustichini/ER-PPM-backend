@@ -7,7 +7,6 @@
 
     <div class="recipe-header">
         {% if recipe.image %}
-            <p>URL dell'immagine: {{ recipe.image.url }}</p> <!-- Debug URL dell'immagine -->
             <img src="{{ recipe.image.url }}" alt="Immagine {{ recipe.recipe_name }}" class="recipe-image">
         {% else %}
             <img src="" alt="Immagine non disponibile" class="recipe-image">
@@ -28,6 +27,7 @@
         <p><strong>Difficoltà:</strong> {{ recipe.get_difficulty_display }}</p>
         <p><strong>Categoria:</strong> {{ recipe.get_categories_display }}</p>
         <p><strong>Calorie:</strong> {{ recipe.calories }} kcal</p>
+        <p><strong>Likes: {{ recipe.likes }}</strong></p>
     </div>
 
     <div class="recipe-instructions">
@@ -51,12 +51,21 @@
         </div>
     {% endif %}
     
-    <!-- TODO: da fare FAVORITI
-     <div class="favorite-section">
+    
+    <div class="favorite-section">
         {% if is_favorite %}
+            <form method="post" action="{% url 'like_recipe' recipe.id %}">
+                {% csrf_token %}
+                <button type="submit">Rimuovi dai preferiti</button>
+            </form>
         {% else %}
+            <form method="post" action="{% url 'like_recipe' recipe.id %}">
+                {% csrf_token %}
+                <button type="submit">Aggiungi ai preferiti</button>
+            </form>
         {% endif %}
-    </div>-->
+    </div>
+    
     
     <div class="comments-section">
         <h1>Commenti</h1>

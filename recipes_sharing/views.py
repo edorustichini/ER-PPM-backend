@@ -13,20 +13,24 @@ def home(request):
     recent_recipes = Recipe.objects.order_by('-creation_date')[:6]  # ultime 4 ricette inserite
     return render(request, 'recipes_sharing/home.html', {'recent_recipes': recent_recipes})
 
-# TODO: funziona ma da migliorare, 
+def all_recipes(request):
+    recipes = Recipe.objects.all()
+    context = { 'recipes': recipes }
+    return render(request, 'recipes_sharing/all_recipes.html', context)
+
+
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            UserProfile.objects.create(user=user) # creo un profilo per il nuovo utente
+            UserProfile.objects.create(user=user) # creo un profilo sul sito per il nuovo utente
             auth_login(request, user)
             messages.success(request, 'Registrazione avvenuta con successo.')
             return redirect('home')
     else:
         form = UserRegistrationForm()
     return render(request, 'recipes_sharing/register.html', {'form': form}) 
-
 
 
 def login(request):
@@ -40,7 +44,7 @@ def login(request):
                 auth_login(request, user)
                 messages.success(request, f'Accesso al profilo {username} avvenuto con successo.')
                 
-                # Ottieni l'URL della pagina da cui l'utente proviene (se presente)
+                # l'url della pagina da cui l'utente proviene, per rimandarlo dopo il login
                 prev_url = request.GET.get('next', 'home')
                 return redirect(prev_url)
             else:
@@ -63,10 +67,9 @@ def logout(request):
 
 def view_profile(request, username):
     user = get_object_or_404(User, username=username)
-    profile_user , newly_created = UserProfile.objects.get_or_create(user=user)
-    
-    return render(request, 'recipes_sharing/profile.html', {'profile_user': profile_user})
+    profile_user , newly_created = UserProfile.objects.get_or_create(user=user) # uso booleano newly_created per capire se si è appena registrato
 
+    return render(request, 'recipes_sharing/profile.html', {'profile_user': profile_user})
 
 
 
@@ -75,6 +78,7 @@ def edit_profile(request, username):
     user = User.objects.get(username=username)
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=user.userprofile)
+        
         if form.is_valid():
             form.save()
             messages.success(request, 'Profilo aggiornato con successo.')
@@ -100,6 +104,7 @@ def delete_profile(request, username):
             return redirect('view_profile', username=user.username)
     return render(request, 'recipes_sharing/delete_profile.html', {'profile_user': user})
 
+
 def search(request):
     query = request.GET.get('q')
     difficulty = request.GET.get('difficulty')
@@ -107,6 +112,8 @@ def search(request):
 
     recipes = Recipe.objects.all()
 
+
+    # ricerca concatenando queste caratteristiche, si fa unione
     if query:
         recipes = recipes.filter(recipe_name__icontains=query)
 
@@ -122,32 +129,37 @@ def search(request):
     return render(request, 'recipes_sharing/search_results.html', context)
 
 
-
 def recipe_detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     comments = recipe.comments.all()
-    is_favorite = recipe.liked_by.filter(id=request.user.id).exists() if request.user.is_authenticated else False
+
+    # Booleano per capire se utente l'ha già messa tra i preferiti
+    liked = recipe.liked_by.filter(id=request.user.id).exists() if request.user.is_authenticated else False
     comment_form = CommentForm()
-    return render(request, 'recipes_sharing/recipe_detail.html', {
+    likes = recipe.liked_by.count() 
+    context = {
         'recipe': recipe,
         'comments': comments,
-        'is_favorite': is_favorite,
-        'comment_form': comment_form
-    })
+        'is_favorite': liked,
+        'comment_form': comment_form,
+        'likes': likes,
+    }
+    return render(request, 'recipes_sharing/recipe_detail.html', context)
 
 @login_required(login_url='login')
 def create_recipe(request):
     if request.method == 'POST':
         form = RecipeForm(request.POST, request.FILES)
+
         if form.is_valid():
-            recipe = form.save(commit=False)
+            recipe = form.save(commit=False) # aspetto a salvarla per aggiungere autore
             recipe.author = request.user
-            recipe.save()
-            messages.success(request, 'Recipe created successfully.')
+            recipe.save() # salvataggio informazioni
+            messages.success(request, 'Ricetta creata con successo.')
             return redirect('recipe_detail', recipe_id=recipe.id)
         else:
-            messages.error(request, 'There was an error creating the recipe. Please check the form for errors.')
-            print(form.errors)  # Log degli errori del form
+            messages.error(request, "C'è stato un errore nella creazione della ricetta, riprova.")
+            print(form.errors) 
     else:
         form = RecipeForm()
     return render(request, 'recipes_sharing/create_recipe.html', {'form': form})
@@ -156,29 +168,32 @@ def create_recipe(request):
 @login_required
 def edit_recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
+
     if request.user != recipe.author:
         messages.error(request, 'Non puoi modificare una ricetta che non hai creato!.')
         return redirect('recipe_detail', recipe_id=recipe.id)
 
-    if request.method == 'POST':
+    if request.method == 'POST': 
         form = RecipeForm(request.POST, request.FILES, instance=recipe)
         if form.is_valid():
             form.save()
             messages.success(request, 'Ricetta modificata con successo.')
             return redirect('recipe_detail', recipe_id=recipe.id)
-    else:
-        form = RecipeForm(instance=recipe)
+        
+    else: # se il request è GET voglio vedere il form con i dati presenti
+        form = RecipeForm(instance=recipe) # così è precompilato
     
     return render(request, 'recipes_sharing/edit_recipe.html', {'form': form, 'recipe': recipe})
 
 @login_required
 def delete_recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
+
     if request.user == recipe.author:
         recipe.delete()
-        messages.success(request, 'Recipe deleted successfully.')
+        messages.success(request, 'Ricetta eliminata.')
     else:
-        messages.error(request, 'You are not authorized to delete this recipe.')
+        messages.error(request, 'Non puoi eliminare una ricetta non tua.')
     return redirect('home')
 
 
@@ -199,21 +214,19 @@ def add_comment(request, recipe_id):
 
 
 # TODO: DA IMPLEMENTARE 
-"""
+
 @login_required
-def add_to_favourites(request, recipe_id):
+def like_recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
+
     if recipe.liked_by.filter(id=request.user.id).exists():
-        recipe.liked_by.remove(request.user)
+        recipe.liked_by.remove(request.user) # se aveva già messo like, lo rimuovo
+        liked = False
+        messages.success(request, 'Hai tolto il like.')
     else:
+        # utente non ha messo like
         recipe.liked_by.add(request.user)
+        liked = True
+        messages.success(request, 'Hai aggiunto un like alla richiesta.')
+
     return redirect('recipe_detail', recipe_id=recipe.id)
-
-# TODO: sce
-@login_required
-def liked_recipes(request):
-    liked_recipes = request.user.liked_recipes.all()
-    return render(request, 'recipes_sharing/liked_recipes.html', {'liked_recipes': liked_recipes})
-
-"""
-

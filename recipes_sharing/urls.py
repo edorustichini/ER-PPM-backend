@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),  # Home page
+    path('all/', views.all_recipes, name='all_recipes'),  # All recipes
     path('login/', views.login, name='login'),  # User login
     path('logout/', views.logout, name='logout'),  # User logout
     path('register/', views.register, name='register'),  # User registration
@@ -22,10 +23,7 @@ urlpatterns = [
     path('recipe/<int:recipe_id>/delete/', views.delete_recipe, name='delete_recipe'),  # Delete a recipe
     path('recipe/<int:recipe_id>/edit/', views.edit_recipe, name='edit_recipe'),  # Edit a recipe
    
-    
-    #path('recipe/<int:recipe_id>/favorite/', views.add_to_favourites, name='favorite_recipe'),  # Favorite a recipe
-    #path('liked_recipes/', views.liked_recipes, name='like_recipe'),  # View liked recipes
-    
+    path('recipe/<int:recipe_id>/add_to_favorites/', views.like_recipe, name='like_recipe'),  # Add recipe to favorites
 ]
 
 
