@@ -1,0 +1,52 @@
+{% extends 'recipes_sharing/base.html' %}
+{% load static %}
+
+{% block title %}Profile of {{ profile_user.user.username }}{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <div class="profile-header">
+        <h1>Informazioni profilo</h1>
+        <h2>{{ profile_user.user.username }}</h2>
+
+        <!-- FIXME: email non viene scritta-->
+        <p><strong>Email:</strong> {{ profile_user.user.email }}</p>
+       
+        {% if profile_user.bio %}
+            <p><strong>Bio:</strong> {{ profile_user.bio }}</p>
+        {% endif %}
+    </div>
+    
+    <div class="profile-image">
+        <img src="{{ profile_user.profile_image.url }}" alt="Profile Image">
+    </div>
+
+    <!-- Bottone per modificare il profilo -->
+    {% if user == profile_user.user %}
+    <div class="edit-profile-button">
+        <a href="{% url 'edit_profile' profile_user.user.username %}" class="btn btn-primary">Edit Profile</a>
+        <a href="{% url 'delete_profile' profile_user.user.username %}" class="btn btn-danger">Delete Profile</a>
+    </div>
+    {% endif %}
+    
+    <div class="profile-recipes">
+        <h2>Recipes by {{ profile_user.user.username }}</h2>
+        <ul class="recipe-list">
+            {% for recipe in profile_user.user.recipe_set.all %}
+                <li>
+                    <a href="{% url 'recipe_detail' recipe.id %}">{{ recipe.recipe_name }}</a>
+                    <p>{{ recipe.description|truncatewords:20 }}</p>
+                </li>
+            {% empty %}
+                <li>No recipes found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- TODO: aggiungere sezione per preferiti -->
+    <div>
+
+    </div>
+
+</div>
+{% endblock %}
