@@ -1,6 +1,5 @@
 # Recipe Sharing Website
-
-Questo è un sito di condivisione di ricette.
+[Recipe Sharing Website]()sito di condivisione di ricette.
 
 ## Funzionalità
 In questo gli utenti hanno la possibilità di:
