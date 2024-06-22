@@ -33,7 +33,11 @@
     {% endif %}
     
     <div class="profile-recipes">
-        <h2>Recipes by {{ profile_user.user.username }}</h2>
+        {% if user == profile_user.user%}
+        <h2>Le tue ricette</h2>
+        {% else %}
+        <h2>Ricette create da {{ profile_user.user.username }}</h2>
+        {% endif %}
         <ul class="recipe-list">
             {% for recipe in profile_user.user.recipe_set.all %}
                 <li>
@@ -41,15 +45,32 @@
                     <p>{{ recipe.description|truncatewords:20 }}</p>
                 </li>
             {% empty %}
-                <li>No recipes found.</li>
+            {% if user == profile_user.user%}
+                <!-- FIXME: sistem style <a> di Recipe detail-->
+                <li>Non hai creato ancora ricette, <a href="{% url 'create_recipe' %}">aggiungi la tua prima ricetta</a></li>
+            {% else %}
+                <li> {{ profile_user.user.username }} non ha ancora creato delle ricette</li>
+            {% endif %}
             {% endfor %}
         </ul>
     </div>
 
     <!-- TODO: aggiungere sezione per preferiti -->
-    <div>
-
+    {% if user == profile_user.user%}
+    <div class="profile-recipes">
+        <h2>Ricette che hai messo nei preferiti</h2>
+        <ul class="recipe-list">
+            {% for recipe in user.liked_recipes.all %} <!-- liked_recipes è related name nella relazione manytomany tra ricetta e utente-->
+                <li>
+                    <a href="{% url 'recipe_detail' recipe.id %}">{{ recipe.recipe_name }}</a>
+                    <p>{{ recipe.description|truncatewords:20 }}</p>
+                </li>
+            {% empty %}
+                <li>Non hai ancora messo nessuna ricetta nei preferiti,<a href="{% url 'home' }">esplora le ricette</a> </li>
+            {% endfor %}
+        </ul>
     </div>
+    {% endif %}
 
 </div>
 {% endblock %}

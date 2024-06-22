@@ -23,7 +23,7 @@ class Recipe(models.Model):
     ]
     difficulty = models.CharField(max_length=10, choices=DIFFICULTIES, null=True, blank=True)
     
-    liked_by = models.ManyToManyField(User, related_name='liked_recipes', blank=True, null=True)
+    liked_by = models.ManyToManyField(User, related_name='liked_recipes', blank=True, null=True) # userò liked_recipes per accedere ai like di un utente
     
     CATEGORIES = [
         ('A', 'Antipasto'),
@@ -55,6 +55,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment_content = models.CharField(max_length=300)
     creation_date = models.DateTimeField(auto_now_add=True) # data aggiunta del commento
+
     
     
     def __str__(self):

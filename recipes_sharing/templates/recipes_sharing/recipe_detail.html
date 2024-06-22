@@ -25,7 +25,7 @@
         <p><strong>Difficoltà:</strong> {{ recipe.get_difficulty_display }}</p>
         <p><strong>Categoria:</strong> {{ recipe.get_categories_display }}</p>
         <p><strong>Calorie:</strong> {{ recipe.calories }} kcal</p>
-        <p><strong>Likes: {{ recipe.likes }}</strong></p> <!-- FIXME: non si vede numero likes-->
+        <p><strong>Likes: </strong>{{ recipe.liked_by.count }}</p>
     </div>
 
     <div class="recipe-instructions">
