@@ -28,7 +28,6 @@ Categorie e Tag
 Gli utenti possono interagire tra loro attraverso:
 - **Mi Piace**: si può utilizzare per mettere una particolare ricetta tra le preferite.
 - **Commenti** alle ricette.
-- 
 Categorie Predefinite: Antipasti, Primi Piatti, Secondi Piatti, Contorni, Dolci.
 
 Ogni utente ha un profilo personalizzato che include:
